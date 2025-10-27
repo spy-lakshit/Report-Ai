@@ -1,31 +1,7 @@
-// Dynamic AI Report Generator API - Vercel Ready with Dynamic Content
-const express = require('express');
-const cors = require('cors');
+// Dynamic AI Report Generator API - Vercel Serverless Function
 const { Document, Packer, Paragraph, TextRun, AlignmentType, PageBreak, Header, Footer, PageNumber, NumberFormat, TabStopType, LeaderType } = require('docx');
 
-const app = express();
-app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-
 const progressTracking = new Map();
-
-// Health check
-app.get('/api/health', (req, res) => {
-    res.json({ status: 'OK', message: 'Enhanced AI Report Generator is running!' });
-});
-
-// Progress endpoint
-app.get('/api/progress/:sessionId', (req, res) => {
-    const sessionId = req.params.sessionId;
-    const progress = progressTracking.get(sessionId) || { progress: 0, status: 'Starting...' };
-    res.json(progress);
-});
-
-// Update progress helper
-function updateProgress(sessionId, progress, status) {
-    progressTracking.set(sessionId, { progress, status, timestamp: new Date().toISOString() });
-    console.log(`📊 Progress [${sessionId}]: ${progress}% - ${status}`);
-}
 
 // Extract key technologies and concepts from project description
 function extractProjectConcepts(projectTitle, projectDescription) {
@@ -130,56 +106,8 @@ function generateProjectSpecificChapters(projectTitle, projectDescription) {
     }
 }
 
-// Generate comprehensive content based on word count
-function generateEnhancedContent(config) {
-    const chapters = generateProjectSpecificChapters(config.projectTitle, config.projectDescription);
-    const concepts = extractProjectConcepts(config.projectTitle, config.projectDescription);
-    const targetWords = parseInt(config.targetWordCount) || 15000;
-    
-    console.log(`🎯 Generating DYNAMIC content for: ${config.projectTitle}`);
-    console.log(`🔍 Detected domain: ${concepts.domain}`);
-    console.log(`⚙️ Technologies: ${concepts.technologies.join(', ')}`);
-    console.log(`🚀 Features: ${concepts.features.join(', ')}`);
-    
-    let sections = [];
-    let contentMultiplier = 1;
-    let totalChapters = 6;
-    
-    if (targetWords >= 25000) {
-        contentMultiplier = 3.5;
-        totalChapters = 9;
-        chapters.push("ADVANCED FEATURES AND SYSTEM ENHANCEMENTS");
-        chapters.push("COMPARATIVE ANALYSIS AND BENCHMARKING STUDIES");
-        chapters.push("FUTURE SCOPE, RECOMMENDATIONS AND CONCLUSIONS");
-    } else if (targetWords >= 20000) {
-        contentMultiplier = 2.5;
-        totalChapters = 8;
-        chapters.push("ADVANCED IMPLEMENTATION AND OPTIMIZATION");
-        chapters.push("PERFORMANCE ANALYSIS AND SYSTEM EVALUATION");
-    } else {
-        contentMultiplier = 1.8;
-        totalChapters = 7;
-        chapters.push("PERFORMANCE EVALUATION AND OPTIMIZATION");
-    }
-    
-    console.log(`📊 Generating ${totalChapters} chapters with ${targetWords} words target`);
-    
-    chapters.forEach((chapter, index) => {
-        const chapterNum = index + 1;
-        const chapterContent = generateChapterContent(chapterNum, chapter, config, contentMultiplier);
-        
-        sections.push({
-            title: `CHAPTER ${chapterNum}: ${chapter}`,
-            content: chapterContent,
-            wordCount: chapterContent.split(' ').length
-        });
-    });
-    
-    return sections;
-}
-
 // Generate dynamic chapter content based on project specifics
-function generateChapterContent(chapterNum, chapterTitle, config, multiplier) {
+function generateDynamicChapterContent(chapterNum, chapterTitle, config, targetWords) {
     const concepts = extractProjectConcepts(config.projectTitle, config.projectDescription);
     const projectTitle = config.projectTitle;
     const projectDescription = config.projectDescription;
@@ -200,72 +128,60 @@ Key research areas that inform the ${config.projectTitle} project include modern
 
 Existing solutions in the ${concepts.domain} domain provide valuable insights into both successful approaches and common pitfalls. This analysis has been crucial in identifying the unique value proposition of ${config.projectTitle} and the specific problems it addresses.
 
-${chapterNum}.3 Methodology and Approach
+${chapterNum}.3 Methodology and Implementation
 
-The methodology employed in this chapter follows a systematic and structured approach that ensures comprehensive coverage of all relevant aspects. The approach is designed to be both thorough and practical, providing actionable insights and solutions.
+The development methodology for ${config.projectTitle} follows a systematic approach that ensures comprehensive coverage of all project requirements. The methodology is specifically tailored to address the unique challenges and opportunities presented by ${config.projectDescription}
 
-The methodology incorporates both quantitative and qualitative analysis techniques to ensure a balanced and comprehensive evaluation of all aspects.
+The approach combines agile development principles with traditional software engineering practices to create a robust framework for delivering ${config.projectTitle}. Key phases include requirements analysis, system design, implementation, testing, and deployment.
 
-${chapterNum}.4 Implementation Details and Technical Specifications
+Technical methodology includes the selection of appropriate technologies, frameworks, and tools that are best suited for implementing ${config.projectTitle}. The technology stack is chosen based on factors such as performance requirements, scalability needs, and long-term maintainability.
 
-The implementation of the concepts and methodologies described in this chapter involves detailed technical specifications and careful consideration of all system requirements. The implementation approach is designed to be modular, scalable, and maintainable.
+${chapterNum}.4 Results and Analysis
 
-Technical specifications include detailed descriptions of all system components, interfaces, data structures, and algorithms.
+The results obtained from the implementation and testing of ${config.projectTitle} demonstrate the effectiveness of the chosen approach and validate the project's success in meeting its objectives. Performance analysis includes comprehensive testing of all major system components.
 
-${chapterNum}.5 Results and Analysis
+User acceptance testing results show high levels of satisfaction with ${config.projectTitle}, with users reporting improved efficiency, better user experience, and successful completion of their intended tasks.
 
-The results obtained from the implementation and testing of the concepts described in this chapter demonstrate the effectiveness of the proposed approach. Comprehensive analysis of these results provides insights into both the strengths and areas for improvement.
+Comparative analysis demonstrates that ${config.projectTitle} provides significant advantages over existing solutions in the ${concepts.domain} domain. These advantages include improved functionality, better performance, enhanced usability, and more robust architecture.`;
 
-Performance metrics collected during testing and validation demonstrate that the implemented solution meets or exceeds all specified requirements.`;
-
-    // Add substantial additional content for higher word counts
-    if (multiplier > 1.5) {
-        content += `\n\n${chapterNum}.6 Advanced Features and Capabilities
-
-Advanced features implemented as part of this work extend the basic functionality to support complex use cases and specialized requirements. These features are designed to be modular and extensible, allowing for future enhancements and customizations.
-
-The advanced features include sophisticated algorithms, intelligent automation capabilities, advanced user interface components, and comprehensive integration capabilities.
-
-${chapterNum}.7 Integration and Interoperability
-
-Integration capabilities enable the system to work seamlessly with existing infrastructure and third-party systems. Comprehensive API documentation and integration guidelines support both internal and external integration requirements.
-
-Interoperability standards compliance ensures that the system can communicate effectively with a wide range of external systems and services.
-
-${chapterNum}.8 Quality Assurance and Validation
-
-Comprehensive quality assurance processes ensure that all aspects of the implementation meet the highest standards for reliability, performance, and usability. These processes include both automated and manual testing procedures.
-
-Validation procedures verify that the implemented solution meets all specified requirements and performs as expected under various operating conditions.`;
-    }
-    
-    if (multiplier > 2.5) {
-        content += `\n\n${chapterNum}.9 Security and Compliance Framework
-
-Security considerations are integrated into all aspects of the system design and implementation. Comprehensive security measures protect against various types of threats and vulnerabilities while maintaining system usability and performance.
-
-The security framework includes authentication mechanisms, authorization controls, data encryption, secure communication protocols, and comprehensive audit logging.
-
-${chapterNum}.10 Performance Optimization and Scalability
-
-Performance optimization techniques are applied throughout the system to ensure optimal performance under various load conditions. These techniques include algorithm optimization, database optimization, caching strategies, and resource management.
-
-Scalability considerations are integrated into the system architecture to support future growth and increased usage.
-
-${chapterNum}.11 Maintenance and Support Infrastructure
-
-Comprehensive maintenance procedures and documentation ensure long-term system reliability and availability. These procedures include preventive maintenance, corrective maintenance, and adaptive maintenance to address changing requirements.
-
-Support infrastructure includes help desk capabilities, user documentation, training materials, and troubleshooting guides.
-
-${chapterNum}.12 Future Enhancements and Roadmap
-
-Future enhancement opportunities have been identified through user feedback, performance analysis, and technology trend analysis. These enhancements are prioritized based on user value, technical feasibility, and resource requirements.
-
-The development roadmap includes both short-term and long-term enhancement plans.`;
-    }
-    
     return content;
+}
+
+// Generate comprehensive content based on word count
+function generateEnhancedContent(config) {
+    const chapters = generateProjectSpecificChapters(config.projectTitle, config.projectDescription);
+    const concepts = extractProjectConcepts(config.projectTitle, config.projectDescription);
+    const targetWords = parseInt(config.targetWordCount) || 15000;
+    
+    let sections = [];
+    let totalChapters = chapters.length;
+    
+    // Adjust chapter count based on word count for proper page distribution
+    if (targetWords >= 25000) {
+        totalChapters = Math.min(chapters.length + 2, 9);
+        if (chapters.length < 9) {
+            chapters.push("ADVANCED SYSTEM FEATURES AND ENHANCEMENTS");
+            chapters.push("FUTURE SCOPE AND RECOMMENDATIONS");
+        }
+    } else if (targetWords >= 20000) {
+        totalChapters = Math.min(chapters.length + 1, 8);
+        if (chapters.length < 8) {
+            chapters.push("PERFORMANCE ANALYSIS AND OPTIMIZATION");
+        }
+    }
+    
+    chapters.forEach((chapter, index) => {
+        const chapterNum = index + 1;
+        const chapterContent = generateDynamicChapterContent(chapterNum, chapter, config, targetWords);
+        
+        sections.push({
+            title: `CHAPTER ${chapterNum}: ${chapter}`,
+            content: chapterContent,
+            wordCount: chapterContent.split(' ').length
+        });
+    });
+    
+    return sections;
 }
 
 // Create formatted paragraphs with proper spacing
@@ -388,128 +304,13 @@ function createCoverPage(config) {
     ];
 }
 
-// Create detailed Table of Contents with proper spacing
-function createTableOfContentsPage(config) {
-    const chapters = generateProjectSpecificChapters(config.projectTitle, config.projectDescription);
-    const targetWords = parseInt(config.targetWordCount) || 15000;
-    
-    const contents = [
-        new Paragraph({
-            children: [new TextRun({ text: "TABLE OF CONTENTS", bold: true, size: 28, font: "Times New Roman" })],
-            alignment: AlignmentType.CENTER,
-            spacing: { before: 480, after: 480 }
-        })
-    ];
-
-    const tabStops = [{
-        type: TabStopType.RIGHT,
-        position: 9000,
-        leader: LeaderType.DOT
-    }];
-
-    // Front matter
-    const tocItems = [
-        { text: "Training Certificate", page: "i", bold: false, indent: 0 },
-        { text: "Acknowledgement", page: "ii", bold: false, indent: 0 },
-        { text: "Abstract", page: "iii", bold: false, indent: 0 },
-        { text: "Table of Contents", page: "iv-v", bold: false, indent: 0 },
-        { text: "List of Tables", page: "vi", bold: false, indent: 0 },
-        { text: "List of Figures", page: "vii", bold: false, indent: 0 }
-    ];
-
-    // Dynamic chapters with detailed subsections - improved page calculation
-    let pageStart = 1;
-    const pagesPerChapter = targetWords >= 25000 ? 14 : targetWords >= 20000 ? 12 : targetWords >= 15000 ? 10 : 8;
-    
-    chapters.forEach((chapter, index) => {
-        const chapterNum = index + 1;
-        const pageEnd = pageStart + pagesPerChapter - 1;
-        
-        // Main chapter heading
-        tocItems.push({
-            text: `Chapter ${chapterNum}: ${chapter}`,
-            page: `${pageStart}-${pageEnd}`,
-            bold: true,
-            indent: 0
-        });
-        
-        // Chapter subsections with specific page numbers
-        const subsections = [
-            "Overview and Introduction",
-            "Theoretical Background and Literature Review", 
-            "Methodology and Approach",
-            "Implementation Details and Technical Specifications",
-            "Results and Analysis"
-        ];
-        
-        if (targetWords >= 15000) {
-            subsections.push("Advanced Features and Capabilities");
-            subsections.push("Integration and Interoperability");
-            subsections.push("Quality Assurance and Validation");
-        }
-        
-        if (targetWords >= 20000) {
-            subsections.push("Security and Compliance Framework");
-            subsections.push("Performance Optimization and Scalability");
-        }
-        
-        if (targetWords >= 25000) {
-            subsections.push("Maintenance and Support Infrastructure");
-            subsections.push("Future Enhancements and Roadmap");
-        }
-        
-        const pagesPerSubsection = Math.floor(pagesPerChapter / subsections.length);
-        let subPageStart = pageStart;
-        
-        subsections.forEach((subsection, subIndex) => {
-            const subPageEnd = Math.min(subPageStart + pagesPerSubsection - 1, pageEnd);
-            tocItems.push({
-                text: `${chapterNum}.${subIndex + 1} ${subsection}`,
-                page: subPageStart.toString(),
-                bold: false,
-                indent: 360
-            });
-            subPageStart = subPageEnd + 1;
-        });
-        
-        pageStart = pageEnd + 1;
-    });
-
-    // References
-    tocItems.push({
-        text: "References",
-        page: pageStart.toString(),
-        bold: true,
-        indent: 0
-    });
-
-    // Render TOC items with proper spacing
-    for (const item of tocItems) {
-        contents.push(
-            new Paragraph({
-                children: [
-                    new TextRun({ text: item.text, bold: item.bold, size: 24, font: "Times New Roman" }),
-                    new TextRun({ text: '\t', size: 24, font: "Times New Roman" }),
-                    new TextRun({ text: item.page, bold: item.bold, size: 24, font: "Times New Roman" })
-                ],
-                alignment: AlignmentType.LEFT,
-                spacing: { before: 0, after: 60, line: 240, lineRule: "auto" }, // Reduced spacing
-                indent: { left: item.indent },
-                tabStops: tabStops
-            })
-        );
-    }
-
-    return contents;
-}
-
-// Create other pages (Certificate, Acknowledgement, Abstract, etc.)
+// Create other pages
 function createCertificatePage(config) {
     return [
         new Paragraph({
             children: [new TextRun({ text: "TRAINING CERTIFICATE", bold: true, size: 28, font: "Times New Roman" })],
             alignment: AlignmentType.CENTER,
-            spacing: { before: 480, after: 480 }
+            spacing: { before: 720, after: 720 }
         }),
         new Paragraph({
             children: [new TextRun({
@@ -517,72 +318,67 @@ function createCertificatePage(config) {
                 bold: false, size: 24, font: "Times New Roman"
             })],
             alignment: AlignmentType.JUSTIFIED,
-            spacing: { before: 360, after: 360, line: 360, lineRule: "auto" }
-        }),
-        new Paragraph({
-            children: [new TextRun({
-                text: `The work was carried out under the supervision of ${config.supervisor} during the academic year ${new Date().getFullYear()}.`,
-                bold: false, size: 24, font: "Times New Roman"
-            })],
-            alignment: AlignmentType.JUSTIFIED,
-            spacing: { before: 360, after: 720, line: 360, lineRule: "auto" }
+            spacing: { before: 480, after: 480, line: 360, lineRule: "auto" }
         })
     ];
 }
 
 function createAcknowledgementPage(config) {
+    const concepts = extractProjectConcepts(config.projectTitle, config.projectDescription);
+    
     return [
         new Paragraph({
             children: [new TextRun({ text: "ACKNOWLEDGEMENT", bold: true, size: 28, font: "Times New Roman" })],
             alignment: AlignmentType.CENTER,
-            spacing: { before: 480, after: 480 }
+            spacing: { before: 720, after: 720 }
         }),
         new Paragraph({
             children: [new TextRun({
-                text: `I would like to express my sincere gratitude to my supervisor, ${config.supervisor}, for his valuable guidance, continuous support, and encouragement throughout the development of this ${config.reportType.toLowerCase()}.`,
+                text: `I would like to express my sincere gratitude to my supervisor, ${config.supervisor}, for his valuable guidance throughout the development of the ${config.projectTitle} project. His expertise in ${concepts.domain} has been instrumental in shaping this work.`,
                 bold: false, size: 24, font: "Times New Roman"
             })],
             alignment: AlignmentType.JUSTIFIED,
-            spacing: { before: 360, after: 360, line: 360, lineRule: "auto" }
-        }),
-        new Paragraph({
-            children: [new TextRun({
-                text: `I am also thankful to the faculty members of ${config.department}, ${config.institution}, for their support and for providing the necessary resources and facilities required for this work.`,
-                bold: false, size: 24, font: "Times New Roman"
-            })],
-            alignment: AlignmentType.JUSTIFIED,
-            spacing: { before: 360, after: 720, line: 360, lineRule: "auto" }
+            spacing: { before: 480, after: 360, line: 360, lineRule: "auto" }
         })
     ];
 }
 
 function createAbstractPage(config) {
+    const concepts = extractProjectConcepts(config.projectTitle, config.projectDescription);
+    
     return [
         new Paragraph({
             children: [new TextRun({ text: "ABSTRACT", bold: true, size: 28, font: "Times New Roman" })],
             alignment: AlignmentType.CENTER,
-            spacing: { before: 480, after: 480 }
+            spacing: { before: 720, after: 720 }
         }),
         new Paragraph({
             children: [new TextRun({ 
-                text: `This ${config.reportType} presents the comprehensive study and implementation of "${config.projectTitle}". ${config.projectDescription}`, 
+                text: `This ${config.reportType} presents the comprehensive development and implementation of "${config.projectTitle}", a ${concepts.domain} solution that leverages ${concepts.technologies.join(' and ')} technologies. ${config.projectDescription}`, 
                 bold: false, size: 24, font: "Times New Roman" 
             })],
             alignment: AlignmentType.JUSTIFIED,
-            spacing: { before: 360, after: 360, line: 360, lineRule: "auto" }
-        }),
-        new Paragraph({
-            children: [new TextRun({ 
-                text: "The methodology involves systematic analysis, design, implementation, and evaluation. The work demonstrates practical application of modern technologies and methodologies.", 
-                bold: false, size: 24, font: "Times New Roman" 
-            })],
-            alignment: AlignmentType.JUSTIFIED,
-            spacing: { before: 360, after: 720, line: 360, lineRule: "auto" }
+            spacing: { before: 480, after: 360, line: 360, lineRule: "auto" }
         })
     ];
 }
 
-// Create footer
+// Create header and footer
+function createHeader(config) {
+    return new Header({
+        children: [new Paragraph({
+            children: [new TextRun({ 
+                text: config.projectTitle, 
+                size: 20, 
+                font: "Times New Roman",
+                bold: false
+            })],
+            alignment: AlignmentType.LEFT,
+            spacing: { before: 240, after: 240 }
+        })]
+    });
+}
+
 function createFooter() {
     return new Footer({
         children: [new Paragraph({
@@ -592,23 +388,24 @@ function createFooter() {
     });
 }
 
-// Enhanced DOCX creation
-async function createEnhancedDocx(config) {
+// Dynamic DOCX creation
+async function createDynamicDocx(config) {
     try {
-        console.log(`📝 Creating enhanced DOCX with ${config.targetWordCount} words target...`);
-        
         const sections = generateEnhancedContent(config);
         const mainBodyContent = [];
 
         sections.forEach((section, index) => {
             if (index > 0) {
-                mainBodyContent.push(new Paragraph({ children: [new PageBreak()] }));
+                mainBodyContent.push(new Paragraph({ 
+                    children: [new PageBreak()],
+                    spacing: { before: 0, after: 0 }
+                }));
             }
             
             mainBodyContent.push(new Paragraph({
                 children: [new TextRun({ text: section.title, bold: true, size: 28, font: "Times New Roman" })],
                 alignment: AlignmentType.CENTER,
-                spacing: { before: 480, after: 240 }
+                spacing: { before: 720, after: 480 }
             }));
             
             const contentParagraphs = createFormattedParagraphs(section.content);
@@ -623,12 +420,13 @@ async function createEnhancedDocx(config) {
             spacing: { before: 480, after: 240 }
         }));
 
+        const concepts = extractProjectConcepts(config.projectTitle, config.projectDescription);
         const references = [
-            "1. https://docs.oracle.com/javase/ - Official Java documentation",
-            "2. https://reactjs.org/ - React JavaScript library documentation", 
-            "3. https://nodejs.org/ - Node.js runtime environment",
-            "4. https://developer.mozilla.org/ - Web development resources",
-            "5. https://www.python.org/ - Python programming language"
+            `1. ${concepts.technologies[0] || 'Technology'} Official Documentation`,
+            `2. ${concepts.domain.charAt(0).toUpperCase() + concepts.domain.slice(1)} Best Practices`,
+            `3. Research Papers on ${concepts.features[0] || 'System Development'}`,
+            `4. Performance Analysis Studies`,
+            `5. Industry Standards and Guidelines`
         ];
         
         const referenceParagraphs = createFormattedParagraphs(references.join('\n'));
@@ -650,33 +448,31 @@ async function createEnhancedDocx(config) {
                 },
                 // Front Matter
                 {
-                    headers: { default: new Header({ children: [new Paragraph("")] }) },
+                    headers: { default: createHeader(config) },
                     footers: { default: createFooter() },
                     children: [
                         ...createCertificatePage(config),
                         new Paragraph({ children: [new PageBreak()] }),
                         ...createAcknowledgementPage(config),
                         new Paragraph({ children: [new PageBreak()] }),
-                        ...createAbstractPage(config),
-                        new Paragraph({ children: [new PageBreak()] }),
-                        ...createTableOfContentsPage(config)
+                        ...createAbstractPage(config)
                     ],
                     properties: {
                         page: {
                             pageNumbers: { start: 1, formatType: NumberFormat.LOWER_ROMAN },
-                            margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 }
+                            margin: { top: 1800, right: 1440, bottom: 1440, left: 1440 }
                         }
                     }
                 },
                 // Main Body
                 {
-                    headers: { default: new Header({ children: [new Paragraph("")] }) },
+                    headers: { default: createHeader(config) },
                     footers: { default: createFooter() },
                     children: mainBodyContent,
                     properties: {
                         page: {
                             pageNumbers: { start: 1, formatType: NumberFormat.DECIMAL },
-                            margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 }
+                            margin: { top: 1800, right: 1440, bottom: 1440, left: 1440 }
                         }
                     }
                 }
@@ -693,108 +489,125 @@ async function createEnhancedDocx(config) {
 
         return await Packer.toBuffer(doc);
     } catch (error) {
-        console.error('Enhanced DOCX generation error:', error);
+        console.error('Dynamic DOCX generation error:', error);
         throw error;
     }
 }
 
-// Report generation endpoint
-app.post('/api/generate-report', async (req, res) => {
-    const sessionId = Date.now().toString();
+// Main serverless function handler
+module.exports = async (req, res) => {
+    // Enable CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+
+    const { method, url } = req;
     
     try {
-        const config = req.body;
-        
-        const required = ['studentName', 'studentId', 'course', 'semester', 'institution', 'supervisor', 'projectTitle', 'projectDescription', 'reportType', 'targetWordCount'];
-        
-        for (const field of required) {
-            if (!config[field] || config[field].trim() === '') {
-                return res.status(400).json({ error: `Missing required field: ${field}` });
-            }
+        // Health check
+        if (method === 'GET' && url === '/api/health') {
+            return res.json({ status: 'OK', message: 'Dynamic AI Report Generator is running!' });
         }
         
-        if (!config.department) {
-            config.department = `Department of ${config.course}`;
+        // Progress check
+        if (method === 'GET' && url.startsWith('/api/progress/')) {
+            const sessionId = url.split('/').pop();
+            const progress = progressTracking.get(sessionId) || { progress: 0, status: 'Starting...' };
+            return res.json(progress);
         }
         
-        res.json({ sessionId, message: 'Enhanced report generation started' });
-        
-        console.log(`🎯 Generating enhanced report: ${config.projectTitle} (${config.targetWordCount} words)`);
-        
-        updateProgress(sessionId, 10, 'Initializing enhanced system...');
-        
-        (async () => {
-            try {
-                updateProgress(sessionId, 30, 'Generating dynamic chapters...');
-                updateProgress(sessionId, 70, 'Creating enhanced DOCX format...');
-                
-                const docxBuffer = await createEnhancedDocx(config);
-                
-                updateProgress(sessionId, 90, 'Finalizing enhanced report...');
-                
-                const filename = `${config.studentName.replace(/\s+/g, '_')}_${config.projectTitle.replace(/[^a-zA-Z0-9]/g, '_')}_Enhanced_${config.targetWordCount}w_Report.docx`;
-                
-                const reportData = {
-                    content: docxBuffer,
-                    filename: filename,
-                    completed: true,
-                    completedAt: new Date().toISOString(),
-                    isDocx: true,
-                    isEnhanced: true,
-                    wordCount: config.targetWordCount
-                };
-                
-                progressTracking.set(sessionId, {
-                    progress: 100,
-                    status: `Enhanced ${config.targetWordCount}-word report completed!`,
-                    timeRemaining: 0,
-                    reportData: reportData
-                });
-                
-                console.log(`✅ Enhanced report generated: ${filename}`);
-                
-            } catch (error) {
-                console.error('❌ Enhanced report generation failed:', error);
-                progressTracking.set(sessionId, {
-                    progress: 0,
-                    status: `Generation failed: ${error.message}`,
-                    timeRemaining: 0,
-                    error: true
-                });
+        // Download report
+        if (method === 'GET' && url.startsWith('/api/download/')) {
+            const sessionId = url.split('/').pop();
+            const progressData = progressTracking.get(sessionId);
+            
+            if (!progressData || !progressData.reportData) {
+                return res.status(404).json({ error: 'Report not found or not ready' });
             }
-        })();
+            
+            const { content, filename } = progressData.reportData;
+            
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            
+            return res.send(content);
+        }
+        
+        // Generate report
+        if (method === 'POST' && url === '/api/generate-report') {
+            const sessionId = Date.now().toString();
+            const config = req.body;
+            
+            // Validate required fields
+            const required = ['studentName', 'studentId', 'course', 'semester', 'institution', 'supervisor', 'projectTitle', 'projectDescription', 'reportType', 'targetWordCount'];
+            
+            for (const field of required) {
+                if (!config[field] || config[field].trim() === '') {
+                    return res.status(400).json({ error: `Missing required field: ${field}` });
+                }
+            }
+            
+            if (!config.department) {
+                config.department = `Department of ${config.course}`;
+            }
+            
+            // Start generation process
+            progressTracking.set(sessionId, { progress: 10, status: 'Analyzing project requirements...' });
+            
+            // Generate report asynchronously
+            setImmediate(async () => {
+                try {
+                    progressTracking.set(sessionId, { progress: 30, status: 'Generating dynamic content...' });
+                    
+                    const concepts = extractProjectConcepts(config.projectTitle, config.projectDescription);
+                    
+                    progressTracking.set(sessionId, { progress: 70, status: 'Creating DOCX format...' });
+                    
+                    const docxBuffer = await createDynamicDocx(config);
+                    
+                    const filename = `${config.studentName.replace(/\s+/g, '_')}_${config.projectTitle.replace(/[^a-zA-Z0-9]/g, '_')}_Dynamic_${config.targetWordCount}w_Report.docx`;
+                    
+                    const reportData = {
+                        content: docxBuffer,
+                        filename: filename,
+                        completed: true,
+                        completedAt: new Date().toISOString(),
+                        isDocx: true,
+                        isDynamic: true,
+                        wordCount: config.targetWordCount,
+                        projectConcepts: concepts
+                    };
+                    
+                    progressTracking.set(sessionId, {
+                        progress: 100,
+                        status: `Dynamic ${config.targetWordCount}-word report completed!`,
+                        reportData: reportData
+                    });
+                    
+                } catch (error) {
+                    console.error('Report generation failed:', error);
+                    progressTracking.set(sessionId, {
+                        progress: 0,
+                        status: `Generation failed: ${error.message}`,
+                        error: true
+                    });
+                }
+            });
+            
+            return res.json({ sessionId, message: 'Dynamic report generation started' });
+        }
+        
+        // Default response
+        return res.status(404).json({ error: 'Endpoint not found' });
         
     } catch (error) {
-        console.error('❌ Enhanced report generation error:', error);
-        res.status(500).json({ error: error.message });
+        console.error('API Error:', error);
+        return res.status(500).json({ error: error.message });
     }
-});
-
-// Download endpoint
-app.get('/api/download/:sessionId', (req, res) => {
-    const sessionId = req.params.sessionId;
-    const progressData = progressTracking.get(sessionId);
-    
-    if (!progressData || !progressData.reportData) {
-        return res.status(404).json({ error: 'Enhanced report not found or not ready' });
-    }
-    
-    const { content, filename } = progressData.reportData;
-    
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.setHeader('X-Report-Type', 'enhanced-docx');
-    
-    res.send(content);
-});
-
-// Start server
-if (require.main === module) {
-    const PORT = process.env.PORT || 3004;
-    app.listen(PORT, () => {
-        console.log(`🚀 Enhanced AI Report Generator API running on http://localhost:${PORT}`);
-        console.log(`✨ Features: Dynamic chapters, Multiple word counts (15k/20k/25k), Smart page counts (50-100 pages)`);
-    });
-}
-
-module.exports = app;
+};
