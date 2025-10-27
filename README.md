@@ -1,103 +1,44 @@
-# 🚀 AI Report Generator
+# AI Report Generator
 
-A stunning, AI-powered university report generator that creates professional academic reports in minutes.
+A web application that generates comprehensive academic reports using AI.
 
-## ✨ Features
+## Features
 
-- **🤖 AI-Powered**: Generate comprehensive reports using advanced AI
-- **📄 50+ Pages**: Professional university-standard formatting
-- **⚡ Lightning Fast**: Generate reports in under 5 minutes
-- **🎨 Beautiful UI**: Modern, animated interface with glassmorphism design
-- **📱 Responsive**: Works perfectly on all devices
-- **🔒 No API Key Required**: Built-in AI access for seamless experience
+- Generate professional academic reports
+- AI-powered content creation
+- DOCX file output
+- Modern web interface
 
-## 🌟 Live Demo
+## Deployment
 
-Visit the live application: [Your Vercel URL]
+This project is designed for Vercel deployment with serverless functions.
 
-## 🚀 Quick Start
+### Required Files for Deployment:
 
-### Local Development
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/ai-report-generator.git
-cd ai-report-generator
+```
+├── package.json
+├── vercel.json
+├── api/
+│   ├── index.js
+│   └── generate-report.js
+└── public/
+    └── index.html
 ```
 
-2. Install dependencies:
-```bash
-npm install
-```
+### Deploy to Vercel:
 
-3. Start the development server:
-```bash
-npm start
-```
+1. Push to GitHub
+2. Connect repository to Vercel
+3. Deploy automatically
 
-4. Open your browser and navigate to `http://localhost:3000`
+## API Endpoints
 
-### Deploy to Vercel
+- `GET /api/` - Health check
+- `POST /api/generate-report` - Generate and download report
 
-1. Push your code to GitHub
-2. Connect your GitHub repository to Vercel
-3. Deploy with one click!
+## Usage
 
-## 📋 Environment Variables
-
-For production deployment, set these environment variables in Vercel:
-
-- `GEMINI_API_KEY`: Your Google Gemini API key (optional, has fallback)
-- `NODE_ENV`: Set to "production"
-
-## 🛠️ Tech Stack
-
-- **Backend**: Node.js, Express.js
-- **Frontend**: Vanilla HTML/CSS/JavaScript with modern animations
-- **AI**: Google Gemini API
-- **Document Generation**: docx library
-- **Deployment**: Vercel
-
-## 📖 Usage
-
-1. Fill in your student information
-2. Enter your project details
-3. Select report type and word count
-4. Click "Generate My Report"
-5. Wait for AI to create your report
-6. Download your professional DOCX file
-
-## 🎯 Report Types
-
-- **Project Report**: For academic projects and coursework
-- **Internship Report**: For internship experiences
-- **Thesis Report**: For thesis and dissertation work
-
-## 📊 Report Structure
-
-Each generated report includes:
-
-- Cover Page
-- Training Certificate
-- Acknowledgement
-- Abstract
-- Table of Contents
-- List of Tables & Figures
-- 7 Comprehensive Chapters
-- References
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 🆘 Support
-
-If you encounter any issues or have questions, please open an issue on GitHub.
-
----
-
-Made with ❤️ for students worldwide
+1. Visit the deployed URL
+2. Fill out the form with project details
+3. Click "Generate Report"
+4. Download the generated DOCX file
