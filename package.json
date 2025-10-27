@@ -2,8 +2,7 @@
   "name": "ai-report-generator",
   "version": "1.0.0",
   "description": "AI Report Generator",
-  "main": "api/index.js",
-  "dependencies": {},
+  "type": "module",
   "engines": {
     "node": ">=18.0.0"
   },
