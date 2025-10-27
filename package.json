@@ -1,28 +1,11 @@
 {
   "name": "ai-report-generator",
   "version": "1.0.0",
-  "description": "Dynamic AI Report Generator with project-specific content generation",
+  "description": "AI Report Generator",
   "main": "api/index.js",
-  "scripts": {
-    "start": "node api/index.js",
-    "dev": "node api/index.js",
-    "test": "echo \"No tests specified\" && exit 0"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "docx": "^8.2.2"
-  },
+  "dependencies": {},
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": [
-    "ai",
-    "report-generator",
-    "docx",
-    "dynamic-content",
-    "vercel"
-  ],
-  "author": "Your Name",
   "license": "MIT"
 }
